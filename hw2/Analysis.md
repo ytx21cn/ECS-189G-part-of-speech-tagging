@@ -1,4 +1,6 @@
-# Task 1
+# ECS 189G Part of speech tagging
+
+## Task 1
 
 In this task, the file I used to train ([ptb.22.txt](./ptb.22.txt)) contains 1700 lines. Hence I chose breakpoints to be 50, 100, 200, 500, 1000, 1500, 1700. The plot of errors vs. training size is seen as follows:
 ![](./task1.svg)
