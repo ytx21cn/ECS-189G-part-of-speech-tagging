@@ -10,9 +10,10 @@ then
 fi
 
 mkdir -p $subsetsDir
+rm -f $subsetsDir/*
 chmod +x $filter
 
-for i in 50 100 200 500 1000 1500 2000
+for i in 50 100 200 500 1000 1500 1700
 do
 	$filter $sourceFile $i > $subsetsDir/$sourceFileMainName-$i.txt
 done

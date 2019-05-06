@@ -13,7 +13,7 @@ error rate by word:      0.0818481290649548 (2907 errors out of 35517)
 error rate by sentence:  0.726 (1089 errors out of 1500)
 
 
-./subsets/ptb.22-2000.txt
+./subsets/ptb.22-1700.txt
 error rate by word:      0.0766507964204701 (3075 errors out of 40117)
 error rate by sentence:  0.709411764705882 (1206 errors out of 1700)
 
