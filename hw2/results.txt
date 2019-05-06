@@ -1,0 +1,35 @@
+./subsets/ptb.22-1000.txt
+error rate by word:      0.0965129453233184 (2300 errors out of 23831)
+error rate by sentence:  0.766 (766 errors out of 1000)
+
+
+./subsets/ptb.22-100.txt
+error rate by word:      0.206206614944875 (505 errors out of 2449)
+error rate by sentence:  0.91 (91 errors out of 100)
+
+
+./subsets/ptb.22-1500.txt
+error rate by word:      0.0818481290649548 (2907 errors out of 35517)
+error rate by sentence:  0.726 (1089 errors out of 1500)
+
+
+./subsets/ptb.22-2000.txt
+error rate by word:      0.0766507964204701 (3075 errors out of 40117)
+error rate by sentence:  0.709411764705882 (1206 errors out of 1700)
+
+
+./subsets/ptb.22-200.txt
+error rate by word:      0.20720528671925 (972 errors out of 4691)
+error rate by sentence:  0.86 (172 errors out of 200)
+
+
+./subsets/ptb.22-500.txt
+error rate by word:      0.126468382904274 (1518 errors out of 12003)
+error rate by sentence:  0.824 (412 errors out of 500)
+
+
+./subsets/ptb.22-50.txt
+error rate by word:      0.228085106382979 (268 errors out of 1175)
+error rate by sentence:  1 (50 errors out of 50)
+
+
