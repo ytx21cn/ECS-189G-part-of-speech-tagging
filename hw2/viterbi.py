@@ -14,14 +14,15 @@ hmmFile = sys.argv[1]
 inputFile = sys.argv[2]
 
 states = dict()
-transitionProbs = dict()
-emissionProbs = dict()
-vocabulary = dict()
+transProbs = dict()
+emitProbs = dict()
+vocab = dict()
 
 # Read the hmm file and store the log of the probabilities
 # The hmm has "trans" lines and "emit" lines
 
 with open(hmmFile) as hmmFile:
+	# use splitlines() to exclude "\n"s at the end of each line
 	for line in hmmFile.read().splitlines():
 		'''
 		Line structures in a hmm file:
@@ -52,7 +53,7 @@ with open(hmmFile) as hmmFile:
 				p = transition probability
 			'''
 			prevState, currentState, transProb = transMatch.groups()
-			trans[[prevState, currentState]] = math.log(float(transProb))
+			transProbs[(prevState, currentState)] = math.log(float(transProb))
 			states[prevState] = 1
 			states[currState] = 1
 
@@ -65,13 +66,24 @@ with open(hmmFile) as hmmFile:
 				w = word
 			'''
 			currentState, word, emitProb = emitMatch.groups()
-			emit[[currentState, word]] = math.log(float(emitProb))
+			emitProbs[(currentState, word)] = math.log(float(emitProb))
 			states[currentState] = 1
-			vocabulary[word] = 1
+			vocab[word] = 1
 
 		else:
 			pass
 
+with open(inputFile) as inputFile:
+	for line in inputFile.read().splitlines():
+		currentLineList = line.split(" ");
+		backtrace = dict()
+		initProbs = {(0, INIT_STATE, INIT_STATE): 0.0} # math.log(1) = 0
+		# pi_1, ..., pi_n: an initial probability distribution over states 1, ..., n
+		
+		for index, word in enumerate(currentLineList, 1): # index start from 1
+			# if a word isn't in the vocabulary, rename it with the OOV symbol
+			
+		
 
 
 
