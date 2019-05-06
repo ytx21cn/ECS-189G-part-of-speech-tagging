@@ -48,8 +48,9 @@ with open(hmmFile) as hmmFile:
 				trans PRP$ NNS 0.166666666667
 
 			In viterbi.pl:
-				qq = previous
-				q = current
+				A = transition probability collection
+				qq = previous state
+				q = current state
 				p = transition probability
 			'''
 			prevState, currentState, transProb = transMatch.groups()
@@ -62,6 +63,7 @@ with open(hmmFile) as hmmFile:
 				emit PRP$ OOV 0.666666666667
 
 			In viterbi.pl:
+				B = emission probability collection
 				q = current state
 				w = word
 			'''
@@ -75,18 +77,50 @@ with open(hmmFile) as hmmFile:
 
 with open(inputFile) as inputFile:
 	for line in inputFile.read().splitlines():
+		''' In viterbi.pl:
+			@w: current line as a list
+			$n: length of current line
+		'''
 		currentLineList = line.split(" ");
+		currentLineLen = len(currentLineList);
 		backtrace = dict()
-		initProbs = {(0, INIT_STATE, INIT_STATE): 0.0} # math.log(1) = 0
+		initProbs = {(0, INIT_STATE): 0.0} # math.log(1) = 0
 		# pi_1, ..., pi_n: an initial probability distribution over states 1, ..., n
-		
-		for index, word in enumerate(currentLineList, 1): # index start from 1
-			# if a word isn't in the vocabulary, rename it with the OOV symbol
+		''' In viterbi.pl:
+			V = initial probability distribution
+		'''
+
+		# for each word in the line represented by the list, with their indices starting at 1
+		for index, word in enumerate(currentLineList, 1):
 			
-		
+			# if a word isn't in the vocabulary, rename it with the OOV symbol
+			if word not in vocab:
+				word = OOV_SYMBOL # since an OOV_SYMBOL is assigned a score during training
+			
+			for prevState, currentState in itertools.product(states, states):
+				if ((prevState, currentState) in transProbs) and ((currentState, word) in emitProbs) and ((index - 1, prevState) in initProbs):
+					'''
+					In viterbi.pl:
+						$v = viterbi probability
+					'''
+					viterbiProb = initProbs[(index - 1, prevState)] + transProbs[(prevState, currentState)] + emitProbs[(currentState, word)] # log of product
 
+					# if we found a better previous state, take note!
+					if ((index, currentState) not in initProbs) or (viterbiProb > initProbs[(index, currentState)]):
+						initProbs[(index, currentState)] = viterbiProb
+						backtrace[(index, currentState)] = prevState # best previous state
 
+		# Now handle the last of the Viterbi equations
+		foundGoal = False
+		goal = float("-inf");
+		foundState = INIT_STATE
 
-
-
-
+		for state in states:
+			if ((state, FINAL_STATE) in transProbs) and ((currentLineLen, state) in initProbs)
+				viterbiProb = initProbs[(currentLineLen, state)] + transProbs[(state, FINAL_STATE)]
+				# if we found a better path
+				if (not foundGoal) or (viterbiProb > goal):
+					goal = transProbs
+					foundGoal = True
+					foundState = state
+					
