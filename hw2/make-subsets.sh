@@ -13,7 +13,7 @@ mkdir -p $subsetsDir
 rm -f $subsetsDir/*
 chmod +x $filter
 
-for i in 50 100 200 500 1000 1500 1700
+for i in 500 1000 2000 5000 10000 20000 40000
 do
 	$filter $sourceFile $i > $subsetsDir/$sourceFileMainName-$i.txt
 done
