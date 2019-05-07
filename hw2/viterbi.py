@@ -7,7 +7,7 @@ import itertools
 
 # Task 2: bigram Viterbi algorithm
 
-# Usage: ./viterbi.py <hmmFile> <inputFile> > <outputFile>
+# Usage: python2 ./viterbi.py <hmmFile> <inputFile> > <outputFile>
 
 INIT_STATE = "init"
 FINAL_STATE = "final"
