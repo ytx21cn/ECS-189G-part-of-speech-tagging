@@ -1,3 +1,5 @@
+#!/bin/bash
+
 subsetMaker=./make-subsets.sh
 
 sourceFile=$1

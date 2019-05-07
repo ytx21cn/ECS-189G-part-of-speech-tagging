@@ -1,3 +1,5 @@
+#!/bin/bash
+
 filter=./filter-lines.sh
 sourceFile=$1
 sourceFileMainName="${sourceFile%.*}"

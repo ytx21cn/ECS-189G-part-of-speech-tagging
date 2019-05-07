@@ -1,3 +1,5 @@
+#!/bin/bash
+
 file=$1
 numLines=$2
 startingLine=1
