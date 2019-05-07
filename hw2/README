@@ -9,18 +9,18 @@ This package includes scripts for training (train_hmm.pl or train_hmm.py -- both
 Train a bigram HMM tagger from sections 2-21 of the Penn Treebank:
 
   # Perl:
-  ./train_hmm.pl ptb.2-21.tgs ptb.2-21.txt > my.hmm
+  perl ./train_hmm.pl ptb.2-21.tgs ptb.2-21.txt > my.hmm
 
   # Python:
-  ./train_hmm.py ptb.2-21.tgs ptb.2-21.txt > my.hmm
+  python2 ./train_hmm.py ptb.2-21.tgs ptb.2-21.txt > my.hmm
 
 Run the Viterbi algorithm to tag some data:
 
-  ./viterbi.pl my.hmm < ptb.22.txt > my.out
+  perl ./viterbi.pl my.hmm < ptb.22.txt > my.out
 
 Evaluate:
 
-  ./tag_acc.pl ptb.22.tgs my.out
+  perl ./tag_acc.pl ptb.22.tgs my.out
 
 Output should be as follows, modulo floating point differences:
 
