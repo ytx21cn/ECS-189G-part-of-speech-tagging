@@ -1,10 +1,13 @@
+#!/usr/bin/python
+
 import sys
 import re
 import math
+import itertools
 
 # Task 2: bigram Viterbi algorithm
 
-# Usage: python2 viterbi.py hmmFile < inputFile > tagsFile
+# Usage: ./viterbi.py <hmmFile> <inputFile> > <outputFile>
 
 INIT_STATE = "init"
 FINAL_STATE = "final"
@@ -13,7 +16,7 @@ OOV_SYMBOL = "OOV"
 hmmFile = sys.argv[1]
 inputFile = sys.argv[2]
 
-states = dict()
+tags = dict()
 transProbs = dict()
 emitProbs = dict()
 vocab = dict()
@@ -49,14 +52,14 @@ with open(hmmFile) as hmmFile:
 
 			In viterbi.pl:
 				A = transition probability collection
-				qq = previous state
-				q = current state
+				qq = previous tag
+				q = current tag
 				p = transition probability
 			'''
-			prevState, currentState, transProb = transMatch.groups()
-			transProbs[(prevState, currentState)] = math.log(float(transProb))
-			states[prevState] = 1
-			states[currState] = 1
+			prevTag, currentTag, transProb = transMatch.groups()
+			transProbs[(prevTag, currentTag)] = math.log(float(transProb))
+			tags[prevTag] = 1
+			tags[currentTag] = 1
 
 		elif emitMatch:
 			''' "emit" line structure:
@@ -64,12 +67,12 @@ with open(hmmFile) as hmmFile:
 
 			In viterbi.pl:
 				B = emission probability collection
-				q = current state
+				q = current tag
 				w = word
 			'''
-			currentState, word, emitProb = emitMatch.groups()
-			emitProbs[(currentState, word)] = math.log(float(emitProb))
-			states[currentState] = 1
+			currentTag, word, emitProb = emitMatch.groups()
+			emitProbs[(currentTag, word)] = math.log(float(emitProb))
+			tags[currentTag] = 1
 			vocab[word] = 1
 
 		else:
@@ -85,7 +88,7 @@ with open(inputFile) as inputFile:
 		currentLineLen = len(currentLineList);
 		backtrace = dict()
 		initProbs = {(0, INIT_STATE): 0.0} # math.log(1) = 0
-		# pi_1, ..., pi_n: an initial probability distribution over states 1, ..., n
+		# pi_1, ..., pi_n: an initial probability distribution over tags 1, ..., n
 		''' In viterbi.pl:
 			V = initial probability distribution
 		'''
@@ -97,30 +100,41 @@ with open(inputFile) as inputFile:
 			if word not in vocab:
 				word = OOV_SYMBOL # since an OOV_SYMBOL is assigned a score during training
 			
-			for prevState, currentState in itertools.product(states, states):
-				if ((prevState, currentState) in transProbs) and ((currentState, word) in emitProbs) and ((index - 1, prevState) in initProbs):
+			for prevTag, currentTag in itertools.product(tags, tags):
+				if ((prevTag, currentTag) in transProbs) and ((currentTag, word) in emitProbs) and ((index - 1, prevTag) in initProbs):
 					'''
 					In viterbi.pl:
 						$v = viterbi probability
 					'''
-					viterbiProb = initProbs[(index - 1, prevState)] + transProbs[(prevState, currentState)] + emitProbs[(currentState, word)] # log of product
+					viterbiProb = initProbs[(index - 1, prevTag)] + transProbs[(prevTag, currentTag)] + emitProbs[(currentTag, word)] # log of product
 
 					# if we found a better previous state, take note!
-					if ((index, currentState) not in initProbs) or (viterbiProb > initProbs[(index, currentState)]):
-						initProbs[(index, currentState)] = viterbiProb
-						backtrace[(index, currentState)] = prevState # best previous state
+					if ((index, currentTag) not in initProbs) or (viterbiProb > initProbs[(index, currentTag)]):
+						# note that the indices here are at least 1
+						initProbs[(index, currentTag)] = viterbiProb
+						backtrace[(index, currentTag)] = prevTag # best previous state
 
 		# Now handle the last of the Viterbi equations
 		foundGoal = False
 		goal = float("-inf");
-		foundState = INIT_STATE
+		foundTag = INIT_STATE
 
-		for state in states:
-			if ((state, FINAL_STATE) in transProbs) and ((currentLineLen, state) in initProbs)
-				viterbiProb = initProbs[(currentLineLen, state)] + transProbs[(state, FINAL_STATE)]
+		for tag in tags:
+			if ((tag, FINAL_STATE) in transProbs) and ((currentLineLen, tag) in initProbs):
+				viterbiProb = initProbs[(currentLineLen, tag)] + transProbs[(tag, FINAL_STATE)]
 				# if we found a better path
 				if (not foundGoal) or (viterbiProb > goal):
 					goal = transProbs
 					foundGoal = True
-					foundState = state
-					
+					foundTag = tag
+
+		if foundGoal:
+			finalTags = []
+			for i in xrange(currentLineLen, 1, -1):
+				finalTags.append(backtrace[i, foundTag])
+				foundTag = backtrace[i, foundTag]
+			finalTags.reverse()
+			print " ".join(finalTags)
+
+		else:
+			print ' '.join([])
