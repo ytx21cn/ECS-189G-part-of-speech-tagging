@@ -16,7 +16,12 @@ Train a bigram HMM tagger from sections 2-21 of the Penn Treebank:
 
 Run the Viterbi algorithm to tag some data:
 
+  # Perl:
   perl ./viterbi.pl my.hmm < ptb.22.txt > my.out
+  
+  # Python:
+  python2 ./viterbi.py my.hmm ptb.22.txt > my.out
+
 
 Evaluate:
 
