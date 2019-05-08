@@ -10,7 +10,7 @@
 # Code for maximum likelihood estimation of a bigram HMM from 
 # column-formatted training data.
 
-# Usage:  train_hmm.py tags text > hmm-file
+# Usage:  python2 train_hmm.py tags text > hmm-file
 
 # The training data should consist of one line per sequence, with
 # states or symbols separated by whitespace and no trailing whitespace.
