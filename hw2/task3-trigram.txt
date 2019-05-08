@@ -1,0 +1,2 @@
+error rate by word:      0.0887404342298776 (3560 errors out of 40117)
+error rate by sentence:  0.664705882352941 (1130 errors out of 1700)

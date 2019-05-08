@@ -137,4 +137,4 @@ with open(inputFile) as inputFile:
 			print " ".join(finalTags)
 
 		else:
-			print ' '.join([])
+			print " ".join([])

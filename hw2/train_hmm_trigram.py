@@ -10,7 +10,7 @@
 # Code for maximum likelihood estimation of a bigram HMM from 
 # column-formatted training data.
 
-# Usage:  python2 train_hmm_trigram.py tags text > hmm-file
+# Usage:  train_hmm.py tags text > hmm-file
 
 # The training data should consist of one line per sequence, with
 # states or symbols separated by whitespace and no trailing whitespace.
@@ -30,10 +30,12 @@ OOV_WORD="OOV"
 INIT_STATE="init"
 FINAL_STATE="final"
 
-emissions={}
-transitions={}
-transitionsTotal=defaultdict(int)
+emissions=defaultdict(lambda: defaultdict(int))
 emissionsTotal=defaultdict(int)
+
+transitions=defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+transitionsTotal=defaultdict(lambda: defaultdict(int))
+
 
 with open(TAG_FILE) as tagFile, open(TOKEN_FILE) as tokenFile:
 	for tagString, tokenString in izip(tagFile, tokenFile):
@@ -42,8 +44,8 @@ with open(TAG_FILE) as tagFile, open(TOKEN_FILE) as tokenFile:
 		tokens=re.split("\s+", tokenString.rstrip())
 		pairs=zip(tags, tokens)
 
-		prevprevtag = INIT_STATE
-		prevtag = INIT_STATE
+		prevprevtag=INIT_STATE
+		prevtag=INIT_STATE
 
 		for (tag, token) in pairs:
 
@@ -57,31 +59,25 @@ with open(TAG_FILE) as tagFile, open(TOKEN_FILE) as tokenFile:
 				vocab[token]=1
 				token=OOV_WORD
 
-			if tag not in emissions:
-				emissions[tag]=defaultdict(int)
-			if prevtag not in transitions:
-				transitions[prevtag]=defaultdict(int)
-
 			# increment the emission/transition observation
 			emissions[tag][token]+=1
 			emissionsTotal[tag]+=1
 			
-			transitions[prevtag][tag]+=1
-			transitionsTotal[prevtag]+=1
+			transitions[prevprevtag][prevtag][tag]+=1
+			transitionsTotal[prevprevtag][prevtag]+=1
 
+			prevprevtag=prevtag
 			prevtag=tag
 
 		# don't forget the stop probability for each sentence
-		if prevtag not in transitions:
-			transitions[prevtag]=defaultdict(int)
+		transitions[prevprevtag][prevtag][FINAL_STATE]+=1
+		transitionsTotal[prevprevtag][prevtag]+=1
 
-		transitions[prevtag][FINAL_STATE]+=1
-		transitionsTotal[prevtag]+=1
-
-for prevtag in transitions:
-	for tag in transitions[prevtag]:
-		probability = float(transitions[prevtag][tag]) / transitionsTotal[prevtag]
-		print "trans %s %s %s %s" % (prevtag[0], prevtag[1], tag, probability)
+for prevprevtag in transitions:
+	for prevtag in transitions[prevprevtag]:
+		for tag in transitions[prevprevtag][prevtag]:
+			probability = float(transitions[prevprevtag][prevtag][tag]) / transitionsTotal[prevprevtag][prevtag]
+			print "trans %s %s %s %s" % (prevprevtag, prevtag, tag, probability)
 
 for tag in emissions:
 	for token in emissions[tag]:
