@@ -10,7 +10,7 @@
 # Code for maximum likelihood estimation of a bigram HMM from 
 # column-formatted training data.
 
-# Usage:  train_hmm.py tags text > hmm-file
+# Usage:  python2 train_hmm_trigram.py tags text > hmm-file
 
 # The training data should consist of one line per sequence, with
 # states or symbols separated by whitespace and no trailing whitespace.
@@ -29,6 +29,8 @@ vocab={}
 OOV_WORD="OOV"
 INIT_STATE="init"
 FINAL_STATE="final"
+
+# This training script is a slight modification of train_hmm.py, with some changes to data structures to accommodate data for the trigram model
 
 emissions=defaultdict(lambda: defaultdict(int))
 emissionsTotal=defaultdict(int)
