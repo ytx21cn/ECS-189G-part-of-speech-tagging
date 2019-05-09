@@ -86,7 +86,10 @@ with open(inputFile) as inputFile:
 		'''
 		currentLineList = line.split(" ");
 		currentLineLen = len(currentLineList);
+		currentLineList.insert(0, "")
+		
 		backtrace = dict()
+		
 		initProbs = {(0, INIT_STATE): 0.0} # math.log(1) = 0
 		# pi_1, ..., pi_n: an initial probability distribution over tags 1, ..., n
 		''' In viterbi.pl:
@@ -94,25 +97,27 @@ with open(inputFile) as inputFile:
 		'''
 
 		# for each word in the line represented by the list, with their indices starting at 1
-		for index, word in enumerate(currentLineList, 1):
+		for i in xrange(1, currentLineLen + 1):
+
+			word = currentLineList[i]
 			
 			# if a word isn't in the vocabulary, rename it with the OOV symbol
 			if word not in vocab:
 				word = OOV_SYMBOL # since an OOV_SYMBOL is assigned a score during training
 			
 			for prevTag, currentTag in itertools.product(tags, tags):
-				if ((prevTag, currentTag) in transProbs) and ((currentTag, word) in emitProbs) and ((index - 1, prevTag) in initProbs):
+				if ((prevTag, currentTag) in transProbs) and ((currentTag, word) in emitProbs) and ((i - 1, prevTag) in initProbs):
 					'''
 					In viterbi.pl:
 						$v = viterbi probability
 					'''
-					viterbiProb = initProbs[(index - 1, prevTag)] + transProbs[(prevTag, currentTag)] + emitProbs[(currentTag, word)] # log of product
+					viterbiProb = initProbs[(i - 1, prevTag)] + transProbs[(prevTag, currentTag)] + emitProbs[(currentTag, word)] # log of product
 
 					# if we found a better previous state, take note!
-					if ((index, currentTag) not in initProbs) or (viterbiProb > initProbs[(index, currentTag)]):
+					if ((i, currentTag) not in initProbs) or (viterbiProb > initProbs[(i, currentTag)]):
 						# note that the indices here are at least 1
-						initProbs[(index, currentTag)] = viterbiProb
-						backtrace[(index, currentTag)] = prevTag # best previous state
+						initProbs[(i, currentTag)] = viterbiProb
+						backtrace[(i, currentTag)] = prevTag # best previous state
 
 		# Now handle the last of the Viterbi equations
 		foundGoal = False
